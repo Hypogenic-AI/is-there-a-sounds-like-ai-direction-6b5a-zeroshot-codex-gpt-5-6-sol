@@ -1,0 +1,92 @@
+idea:
+  title: Is there a 'sounds like AI' direction in the residual stream?
+  domain: artificial_intelligence
+  hypothesis: 'LLMs are known to have a lot of linear structure that controls their
+
+    output styles and semantics. Is sounding like an AI one of those?
+
+
+    Concretely: a direction that separates human-written from AI-written text
+
+    can already be read out of LLM activations. Is that direction causal for
+
+    generation, so that adding or removing it makes the model''s own output
+
+    read as more or less AI-written to an independent detector while content
+
+    and coherence are preserved? And is it a distinct "AI-ness" direction, or
+
+    a relabelling of formality, domain, length, or the assistant persona?
+
+    '
+  background:
+    description: "Why it matters. A steerable \"AI-ness\" direction would bear on\n\
+      machine-text detection and its evasion, on whether \"sounding like AI\" is\n\
+      the same thing as \"being the Assistant\", and on whether models represent\n\
+      \"this text was written by a model\".\n\nWhat is known. The read-out half is\
+      \ essentially answered: human versus\nAI text is linearly separable in LLM activations.\
+      \ Quaremba et al.\n(2608.24780) show linear probes beat 16 detectors on 4 benchmarks\
+      \ and\nrecover a shared machine-generated-text direction that generalises\n\
+      across settings. SV-Detect (2606.07313) extracts per-layer human-vs-AI\ndirections\
+      \ and uses them for detection. Kuznetsov et al. (2503.03601)\nuse Gemma-2-2b\
+      \ residual SAE features for detection, with some feature\nsteering to interpret\
+      \ features. All three are about detection (judged\nfrom abstracts). Lu et al.,\
+      \ \"The Assistant Axis\", find a dominant,\nsteerable persona direction for\
+      \ the default Assistant identity that also\nexists in base models; that is persona,\
+      \ not surface style.\n\nGap. A run that stops at \"a probe reaches high AUROC\"\
+      \ is a replication.\nOpen parts: (1) Causal: does steering or ablating the direction\
+      \ during\ngeneration change how AI-like the output reads to an independent\n\
+      detector, with content and coherence held? (2) Disentanglement: is the\ndirection\
+      \ distinct from formality, fluency or low perplexity, domain,\nlength or verbosity,\
+      \ and the Assistant axis? (3) Base versus instruct:\ndoes the direction exist\
+      \ in the pretrained base model, and is it\namplified by chat tuning?\n\nScope\
+      \ and pitfalls.\n- Models: gated repos (google/gemma-*, meta-llama/*) need the\
+      \ HF_TOKEN\n  environment variable to have been granted access; if a download\
+      \ is\n  refused, Qwen2.5-7B-Instruct and the Qwen2.5-7B base model work\n  without\
+      \ it. Gemma-2-2b has public Gemma Scope SAEs. An OpenRouter API\n  key is available\
+      \ as OPENROUTER_KEY (for example for an LLM judge).\n- Corpus confounds: human\
+      \ and AI corpora differ in topic, length and\n  formatting (HC3 human answers\
+      \ are Reddit-style), so a naive direction\n  is partly \"Reddit versus encyclopedic\"\
+      . Matched pairs (same question\n  or same prefix) and cross-dataset, cross-generator\
+      \ tests are what\n  show it is one direction about authorship.\n- Steering may\
+      \ degrade coherence before it shifts detector scores. A\n  causal claim needs\
+      \ a random-direction baseline of equal norm, a\n  confound-direction baseline\
+      \ such as formality, a plain prompt baseline\n  (\"write like a human\"), and\
+      \ a comparison at matched coherence.\n- Detector validity: the detector must\
+      \ be independent of the activations\n  the direction was fit on. Public detectors\
+      \ were trained on older\n  generators and LLM judges are noisy on \"sounds like\
+      \ AI\"; use two\n  independent measures.\n- A direction found by reading text\
+      \ may not control writing. That is a\n  reportable negative result if the controls\
+      \ are in place.\n"
+    papers:
+    - url: https://arxiv.org/abs/2608.24780
+      description: Quaremba et al., Linear Probing Provides Robust and Efficient Detection
+        of Machine-Generated Text. Linear probes beat 16 detectors; shared machine-text
+        direction; detection only.
+    - url: https://arxiv.org/abs/2606.07313
+      description: 'Vishnyakov and Gaintseva, SV-Detect: AI-generated Text Detection
+        with Steering Vectors. Per-layer human-vs-AI directions used for detection
+        only.'
+    - url: https://arxiv.org/abs/2503.03601
+      description: Kuznetsov et al., Feature-Level Insights into Artificial Text Detection
+        with Sparse Autoencoders (ACL Findings 2025). Gemma-2-2b SAE features for
+        detection; some feature steering for interpretation.
+    - url: https://www.anthropic.com/research/assistant-axis
+      description: Lu et al., The Assistant Axis (arXiv 2601.10387). Dominant, steerable
+        persona direction for the default Assistant identity; present in base models.
+    datasets:
+    - name: HC3
+      source: huggingface:Hello-SimpleAI/HC3
+      description: Paired human and ChatGPT answers to the same question, 5 domains.
+    - name: RAID
+      source: huggingface:liamdugan/raid
+      description: 'Machine-text detection benchmark: 11 generators, 8 domains, adversarial
+        attacks. Useful for cross-generator and cross-domain transfer.'
+    - name: Human-AI parallel corpus
+      source: huggingface:browndw/human-ai-parallel-corpus
+      description: Human continuation vs LLM continuation of the same prefix; topic-matched.
+    - name: MAGE
+      source: huggingface:yaful/MAGE
+      description: Additional out-of-distribution human vs machine text.
+  metadata:
+    author: Ari Holtzman

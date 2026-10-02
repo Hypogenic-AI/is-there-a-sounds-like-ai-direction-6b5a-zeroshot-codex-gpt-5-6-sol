@@ -1,0 +1,11 @@
+{
+  "method": "zeroshot-codex",
+  "provider": "codex",
+  "model": "gpt-5.6-sol",
+  "command": "codex exec --yolo --model gpt-5.6-sol --json",
+  "timeout_seconds": null,
+  "workspace": "is-there-a-sounds-like-ai-direction-6b5a-zeroshot-codex-gpt-5-6-sol",
+  "github_url": "https://github.com/Hypogenic-AI/is-there-a-sounds-like-ai-direction-6b5a-zeroshot-codex-gpt-5-6-sol",
+  "started_at": "2026-10-02T22:46:16Z",
+  "status": "running"
+}

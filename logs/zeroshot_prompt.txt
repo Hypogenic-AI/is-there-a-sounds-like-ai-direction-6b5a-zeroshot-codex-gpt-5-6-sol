@@ -1,0 +1,146 @@
+You are an autonomous AI researcher. Below is a research idea. Carry out the
+whole project yourself in the current directory, from the idea to a finished
+research paper, in this single session.
+
+Nobody is available to answer questions or approve steps, so make reasonable
+decisions on your own and keep going until the paper is done. There is no time limit: doing the research properly and finishing the paper matters more than speed.
+
+## Research idea
+
+```yaml
+idea:
+  title: Is there a 'sounds like AI' direction in the residual stream?
+  domain: artificial_intelligence
+  hypothesis: |-
+    LLMs are known to have a lot of linear structure that controls their
+    output styles and semantics. Is sounding like an AI one of those?
+
+    Concretely: a direction that separates human-written from AI-written text
+    can already be read out of LLM activations. Is that direction causal for
+    generation, so that adding or removing it makes the model's own output
+    read as more or less AI-written to an independent detector while content
+    and coherence are preserved? And is it a distinct "AI-ness" direction, or
+    a relabelling of formality, domain, length, or the assistant persona?
+  background:
+    description: |-
+      Why it matters. A steerable "AI-ness" direction would bear on
+      machine-text detection and its evasion, on whether "sounding like AI" is
+      the same thing as "being the Assistant", and on whether models represent
+      "this text was written by a model".
+
+      What is known. The read-out half is essentially answered: human versus
+      AI text is linearly separable in LLM activations. Quaremba et al.
+      (2608.24780) show linear probes beat 16 detectors on 4 benchmarks and
+      recover a shared machine-generated-text direction that generalises
+      across settings. SV-Detect (2606.07313) extracts per-layer human-vs-AI
+      directions and uses them for detection. Kuznetsov et al. (2503.03601)
+      use Gemma-2-2b residual SAE features for detection, with some feature
+      steering to interpret features. All three are about detection (judged
+      from abstracts). Lu et al., "The Assistant Axis", find a dominant,
+      steerable persona direction for the default Assistant identity that also
+      exists in base models; that is persona, not surface style.
+
+      Gap. A run that stops at "a probe reaches high AUROC" is a replication.
+      Open parts: (1) Causal: does steering or ablating the direction during
+      generation change how AI-like the output reads to an independent
+      detector, with content and coherence held? (2) Disentanglement: is the
+      direction distinct from formality, fluency or low perplexity, domain,
+      length or verbosity, and the Assistant axis? (3) Base versus instruct:
+      does the direction exist in the pretrained base model, and is it
+      amplified by chat tuning?
+
+      Scope and pitfalls.
+      - Models: gated repos (google/gemma-*, meta-llama/*) need the HF_TOKEN
+        environment variable to have been granted access; if a download is
+        refused, Qwen2.5-7B-Instruct and the Qwen2.5-7B base model work
+        without it. Gemma-2-2b has public Gemma Scope SAEs. An OpenRouter API
+        key is available as OPENROUTER_KEY (for example for an LLM judge).
+      - Corpus confounds: human and AI corpora differ in topic, length and
+        formatting (HC3 human answers are Reddit-style), so a naive direction
+        is partly "Reddit versus encyclopedic". Matched pairs (same question
+        or same prefix) and cross-dataset, cross-generator tests are what
+        show it is one direction about authorship.
+      - Steering may degrade coherence before it shifts detector scores. A
+        causal claim needs a random-direction baseline of equal norm, a
+        confound-direction baseline such as formality, a plain prompt baseline
+        ("write like a human"), and a comparison at matched coherence.
+      - Detector validity: the detector must be independent of the activations
+        the direction was fit on. Public detectors were trained on older
+        generators and LLM judges are noisy on "sounds like AI"; use two
+        independent measures.
+      - A direction found by reading text may not control writing. That is a
+        reportable negative result if the controls are in place.
+    papers:
+    - url: https://arxiv.org/abs/2608.24780
+      description: Quaremba et al., Linear Probing Provides Robust and Efficient Detection of Machine-Generated
+        Text. Linear probes beat 16 detectors; shared machine-text direction; detection only.
+    - url: https://arxiv.org/abs/2606.07313
+      description: 'Vishnyakov and Gaintseva, SV-Detect: AI-generated Text Detection with Steering Vectors.
+        Per-layer human-vs-AI directions used for detection only.'
+    - url: https://arxiv.org/abs/2503.03601
+      description: Kuznetsov et al., Feature-Level Insights into Artificial Text Detection with Sparse
+        Autoencoders (ACL Findings 2025). Gemma-2-2b SAE features for detection; some feature steering
+        for interpretation.
+    - url: https://www.anthropic.com/research/assistant-axis
+      description: Lu et al., The Assistant Axis (arXiv 2601.10387). Dominant, steerable persona direction
+        for the default Assistant identity; present in base models.
+    datasets:
+    - name: HC3
+      source: huggingface:Hello-SimpleAI/HC3
+      description: Paired human and ChatGPT answers to the same question, 5 domains.
+    - name: RAID
+      source: huggingface:liamdugan/raid
+      description: 'Machine-text detection benchmark: 11 generators, 8 domains, adversarial attacks. Useful
+        for cross-generator and cross-domain transfer.'
+    - name: Human-AI parallel corpus
+      source: huggingface:browndw/human-ai-parallel-corpus
+      description: Human continuation vs LLM continuation of the same prefix; topic-matched.
+    - name: MAGE
+      source: huggingface:yaful/MAGE
+      description: Additional out-of-distribution human vs machine text.
+```
+
+The idea may be vague. Part of the job is to turn it into a concrete, testable
+question, find out what is already known, and choose an experimental design
+that gives an informative answer.
+
+## What to deliver
+
+1. **Real experiments.** Write and run the code. Every number, table and figure
+   in the paper must come from something you actually executed here. Never
+   simulate, invent or estimate results; if an experiment fails or the result
+   is negative or inconclusive, report that honestly.
+2. **A paper** in `paper_draft/`: LaTeX source with `paper_draft/main.tex` as
+   the entry point, compiled to `paper_draft/main.pdf`. Write it as a
+   conference-style machine learning paper (abstract, introduction, related
+   work with real citations, method, experiments, results, limitations,
+   conclusion), with figures and tables built from your results.
+3. **A reproducible workspace**: code under `src/`, raw results under
+   `results/`, and a top-level `README.md` that summarizes the question, what
+   you did, the main findings, and how to rerun it.
+
+## Environment
+
+- You are in a Linux container with full permissions inside this directory,
+  and with internet access for papers, datasets, models and packages.
+- Check the hardware before you plan (`nvidia-smi`, `nproc`, `free -g`). GPUs
+  may be shared with other jobs, so check free memory and pick an idle device.
+- Use an isolated Python environment inside this directory (for example
+  `uv venv` and `uv pip install`); do not install into the system Python.
+- API keys available as environment variables: `OPENROUTER_KEY`, `OPENAI_API_KEY`, `HF_TOKEN`. Prefer OpenRouter (base URL https://openrouter.ai/api/v1) for LLM API calls.
+- Keep large files (model weights, datasets, caches) out of the files meant
+  for version control: put them under `data/`, `models/` or a cache directory
+  and list those in `.gitignore`.
+- Never print or write API keys or tokens into any file, log, or the paper.
+- Do not run `git commit` or `git push`, and do not create or modify remotes.
+  The harness that launched you saves and publishes the workspace after you
+  finish.
+
+This session is non-interactive: when you end your turn the session is over,
+any background processes you started are killed, and you will not be called
+again. So never end your turn to wait for something. If a job is still running,
+wait for it inside the turn (for example with a blocking command that polls
+until it finishes), then carry on.
+
+Only when `paper_draft/main.pdf` exists and the README is written, give a
+short final summary of what you found and stop.
