@@ -1,0 +1,30 @@
+              detector_ai                  ... repetition                
+                     mean       std count  ...       mean       std count
+condition                                  ...                           
+baseline         0.595553  0.406592    36  ...   0.300750  0.060109    36
+human_prompt     0.592317  0.387945    36  ...   0.272851  0.048335    36
+minus1           0.494354  0.441451    36  ...   0.281656  0.056734    36
+minus2           0.470068  0.423675    36  ...   0.288122  0.055872    36
+plus1            0.631319  0.404535    36  ...   0.302411  0.061166    36
+plus2            0.722399  0.377930    36  ...   0.327474  0.050762    36
+random_minus2    0.464349  0.420497    36  ...   0.321377  0.050663    36
+random_plus2     0.689016  0.404388    36  ...   0.318523  0.057005    36
+
+[8 rows x 18 columns]
+{
+  "instruct": {
+    "best_layer": 30,
+    "auc_projection": 1.0,
+    "auc_controls": 0.8447222222222222,
+    "auc_combined": 1.0,
+    "partial_projection_coef": 1.0263343851758326
+  },
+  "base": {
+    "best_layer": 29,
+    "auc_projection": 0.9977777777777778,
+    "auc_controls": 0.8447222222222222,
+    "auc_combined": 1.0,
+    "partial_projection_coef": 0.4973155735495423
+  },
+  "cosine_at_instruct_best": 0.9737972
+}

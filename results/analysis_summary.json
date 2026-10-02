@@ -1,0 +1,17 @@
+{
+  "instruct": {
+    "best_layer": 30,
+    "auc_projection": 1.0,
+    "auc_controls": 0.8447222222222222,
+    "auc_combined": 1.0,
+    "partial_projection_coef": 1.0263343851758326
+  },
+  "base": {
+    "best_layer": 29,
+    "auc_projection": 0.9977777777777778,
+    "auc_controls": 0.8447222222222222,
+    "auc_combined": 1.0,
+    "partial_projection_coef": 0.4973155735495423
+  },
+  "cosine_at_instruct_best": 0.9737972
+}
